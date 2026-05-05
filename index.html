@@ -200,18 +200,33 @@
     }
     .edge-flash.show { opacity: 1; }
 
-    /* corner reset hint */
-    #reset-zone {
+    /* restart button (top-left, mirrors HUD on top-right) */
+    #restart-btn {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 14vw;
-      height: 6vh;
-      z-index: 30;
-      cursor: pointer;
+      top: calc(env(safe-area-inset-top) + 1.4vh);
+      left: calc(env(safe-area-inset-left) + 2vw);
+      z-index: 50;
       background: transparent;
+      border: 1px solid var(--ink-dim);
+      color: var(--ink-soft);
+      font-family: ui-monospace, 'SF Mono', 'Menlo', monospace;
+      font-size: clamp(0.7rem, 1.15vw, 0.85rem);
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      padding: 0.55em 0.95em;
+      border-radius: 4px;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      transition: color 150ms, border-color 150ms, transform 120ms;
+      min-height: 36px;
     }
-    #reset-zone.hidden { display: none; }
+    #restart-btn:active {
+      transform: scale(0.96);
+      color: var(--accent);
+      border-color: var(--accent);
+    }
+    #restart-btn.hidden { display: none; }
 
     /* progress bar at very bottom */
     #progress {
@@ -243,7 +258,7 @@
     <button class="play-btn" id="play-btn">Play</button>
     <div class="start-hint">
       Tap right to advance · tap left to go back<br>
-      Top-left corner long-press to reset
+      Restart button top-left to reset
     </div>
   </div>
 
@@ -266,8 +281,8 @@
   <div class="edge-flash left" id="flash-left"></div>
   <div class="edge-flash right" id="flash-right"></div>
 
-  <!-- corner reset (long-press) -->
-  <div id="reset-zone" class="hidden"></div>
+  <!-- restart button (top-left) -->
+  <button id="restart-btn" class="hidden" aria-label="Restart from beginning">↻ Restart</button>
 
   <!-- progress -->
   <div id="progress" class="hidden">
@@ -301,7 +316,7 @@
     const tapRight = $('tap-right');
     const flashLeft = $('flash-left');
     const flashRight = $('flash-right');
-    const resetZone = $('reset-zone');
+    const restartBtn = $('restart-btn');
     const progressEl = $('progress');
     const progressFill = $('progress-fill');
 
@@ -395,7 +410,7 @@
       hudEl.classList.remove('hidden');
       tapLeft.classList.remove('hidden');
       tapRight.classList.remove('hidden');
-      resetZone.classList.remove('hidden');
+      restartBtn.classList.remove('hidden');
       progressEl.classList.remove('hidden');
     }
     function showStartUI() {
@@ -403,7 +418,7 @@
       hudEl.classList.add('hidden');
       tapLeft.classList.add('hidden');
       tapRight.classList.add('hidden');
-      resetZone.classList.add('hidden');
+      restartBtn.classList.add('hidden');
       progressEl.classList.add('hidden');
     }
 
@@ -439,16 +454,10 @@
       showStartUI();
     }
 
-    /* ─── reset long-press ─── */
-    let resetTimer = null;
-    resetZone.addEventListener('pointerdown', e => {
-      resetTimer = setTimeout(() => {
-        if (confirm('Reset to the start? Timer will be cleared.')) resetAll();
-      }, 800);
+    /* ─── restart button ─── */
+    restartBtn.addEventListener('click', () => {
+      if (confirm('Restart from the beginning? Timer will be cleared.')) resetAll();
     });
-    ['pointerup', 'pointerleave', 'pointercancel'].forEach(ev =>
-      resetZone.addEventListener(ev, () => { if (resetTimer) { clearTimeout(resetTimer); resetTimer = null; } })
-    );
 
     /* ─── input ─── */
     tapLeft.addEventListener('click', () => { flash('left'); go(-1); });
