@@ -126,19 +126,10 @@
       text-align: left;
       scroll-behavior: smooth;
       -webkit-overflow-scrolling: touch;
+      touch-action: pan-y;
       scrollbar-width: thin;
       scrollbar-color: rgba(255, 255, 255, 0.18) transparent;
-      padding-right: 0.6em;
-      mask-image: linear-gradient(to bottom,
-        transparent 0,
-        #000 1.6em,
-        #000 calc(100% - 1.6em),
-        transparent 100%);
-      -webkit-mask-image: linear-gradient(to bottom,
-        transparent 0,
-        #000 1.6em,
-        #000 calc(100% - 1.6em),
-        transparent 100%);
+      padding-right: 0.4em;
     }
     #note::-webkit-scrollbar {
       width: 6px;
@@ -189,19 +180,10 @@
       text-transform: uppercase;
     }
 
-    /* ─── tap zones ─── */
-    .tap-zone {
-      position: fixed;
-      top: 0;
-      bottom: 0;
-      width: 50%;
+    /* ─── stage is the tap surface; left half = back, right half = forward ─── */
+    #stage.running {
       cursor: pointer;
-      z-index: 10;
-      background: transparent;
     }
-    .tap-zone.left { left: 0; }
-    .tap-zone.right { right: 0; }
-    .tap-zone.hidden { display: none; }
 
     /* edge feedback flash on tap */
     .edge-flash {
@@ -297,10 +279,6 @@
     <div id="counter">— / —</div>
   </div>
 
-  <!-- tap zones -->
-  <div class="tap-zone left hidden" id="tap-left"></div>
-  <div class="tap-zone right hidden" id="tap-right"></div>
-
   <!-- edge feedback -->
   <div class="edge-flash left" id="flash-left"></div>
   <div class="edge-flash right" id="flash-right"></div>
@@ -336,8 +314,7 @@
     const hudEl = $('hud');
     const timerEl = $('timer');
     const counterEl = $('counter');
-    const tapLeft = $('tap-left');
-    const tapRight = $('tap-right');
+    const stageEl = $('stage');
     const flashLeft = $('flash-left');
     const flashRight = $('flash-right');
     const restartBtn = $('restart-btn');
@@ -432,16 +409,14 @@
     function showRunningUI() {
       startEl.classList.add('hidden');
       hudEl.classList.remove('hidden');
-      tapLeft.classList.remove('hidden');
-      tapRight.classList.remove('hidden');
+      stageEl.classList.add('running');
       restartBtn.classList.remove('hidden');
       progressEl.classList.remove('hidden');
     }
     function showStartUI() {
       startEl.classList.remove('hidden');
       hudEl.classList.add('hidden');
-      tapLeft.classList.add('hidden');
-      tapRight.classList.add('hidden');
+      stageEl.classList.remove('running');
       restartBtn.classList.add('hidden');
       progressEl.classList.add('hidden');
     }
@@ -483,9 +458,16 @@
       if (confirm('Restart from the beginning? Timer will be cleared.')) resetAll();
     });
 
-    /* ─── input ─── */
-    tapLeft.addEventListener('click', () => { flash('left'); go(-1); });
-    tapRight.addEventListener('click', () => { flash('right'); go(+1); });
+    /* ─── input — click on stage; left half = back, right half = forward.
+       On iOS a click only fires after a tap (no drag), so swiping to scroll
+       the note doesn't trigger navigation. ─── */
+    stageEl.addEventListener('click', e => {
+      if (!started) return;
+      const rect = stageEl.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      if (x < rect.width / 2) { flash('left'); go(-1); }
+      else { flash('right'); go(+1); }
+    });
 
     document.addEventListener('keydown', e => {
       if (!started) {
