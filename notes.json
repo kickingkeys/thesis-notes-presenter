@@ -15,7 +15,7 @@
     "Prompting AI with an idea feels like describing a fuzzy dream.",
     "And it takes that fuzzy dream, and crystallises it into something fully formed, filling in the gaps with statistically likely things.",
     "I used to be an architect.\n\nWe produced a lot of images, and they often started with dialogue with another person. We used to draw and speak our ideas over some paper.\n\nSometimes we'd just speak, when we were searching for an idea, and when we found it, we'd just draw.\n\nThere was meaning in what was said and unsaid.\n\nIn the end we'd be left with rich context and traces of our intent.",
-    "So I wanted to make something that felt like that, where I could draw, speak, and untangle my intent from an idea.",
+    "So I made this tool, where I am drawing, speaking, and untangling my intent from a fuzzy idea.",
     "On the left, our first image from a prompt.\n\nOn the right, an image that came out of dialogue, where the exercise did not produce the image but the context and prompt for creating the final image.",
     "You might be thinking you can do this by prompting back and forth.\n\nYes, but tools hold the first output tightly in context and you end up chipping at the edges, fighting tooth and nail to move it diagonally, or laterally.\n\nNo space for imperfect outputs. No space to untangle a fuzzy idea.\n\nWhat I wanted was a tool that asked questions. A dreamy artefact that I could react to. Articulating what I wanted, and what I didn't. A session that produced rich context and traces.\n\nA tool that lets me express intent without assuming intent for me.",
     "That demo allowed me to devote my attention meaningfully in one part of the process.\n\nBut that's just one third of the whole. What about the rest?",
